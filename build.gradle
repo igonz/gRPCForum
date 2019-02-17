@@ -1,3 +1,4 @@
+
 buildscript {
 	ext {
 		springBootVersion = '2.1.2.RELEASE'
@@ -7,9 +8,11 @@ buildscript {
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.5'
 	}
 }
 
+apply plugin: 'com.google.protobuf'
 apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
@@ -23,6 +26,34 @@ repositories {
 }
 
 dependencies {
+    compile 'io.grpc:grpc-netty-shaded:1.18.0'
+    compile 'io.grpc:grpc-protobuf:1.18.0'
+    compile 'io.grpc:grpc-stub:1.18.0'
 	implementation 'org.springframework.boot:spring-boot-starter'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+protobuf {
+	protoc {
+		artifact = "com.google.protobuf:protoc:3.5.1-1"
+	}
+	plugins {
+		grpc {
+			artifact = 'io.grpc:protoc-gen-grpc-java:1.18.0'
+		}
+	}
+	generateProtoTasks {
+		all()*.plugins {
+			grpc {}
+		}
+	}
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs 'build/generated/source/proto/main/grpc'
+			srcDirs 'build/generated/source/proto/main/java'
+		}
+	}
 }
