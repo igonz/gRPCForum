@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.sample.forum.gRPC";
+option java_outer_classname = "IndexProto";
+option objc_class_prefix = "GRPCF";
+
+package grpcforum;
+
+service Question {
+    rpc getQuestions (QuestionsRequest) returns (QuestionsResponse) {}
+}
+
+message QuestionsRequest {
+}
+
+message QuestionsResponse {
+    repeated QuestionMessage question = 1;
+}
+
+message QuestionMessage {
+   string questionContent = 1;
+}

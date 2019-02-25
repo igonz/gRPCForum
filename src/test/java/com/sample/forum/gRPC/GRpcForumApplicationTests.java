@@ -1,4 +1,4 @@
-package com.sample.forum.gRPC.Forum;
+package com.sample.forum.gRPC;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

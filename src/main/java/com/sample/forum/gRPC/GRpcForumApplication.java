@@ -1,4 +1,4 @@
-package com.sample.forum.gRPC.Forum;
+package com.sample.forum.gRPC;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
