@@ -20,4 +20,16 @@ message QuestionsResponse {
 
 message QuestionMessage {
    string questionContent = 1;
+   repeated AnswerMessage answer = 2;
+}
+
+message AnswerRequest {
+}
+
+message AnswerResponse {
+
+}
+
+message AnswerMessage {
+    string answerContent = 1;
 }

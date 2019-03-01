@@ -40,7 +40,7 @@ public class GRpcForumApplicationTests {
 		QuestionGrpc.QuestionBlockingStub blockingStub = QuestionGrpc.newBlockingStub(managedChannel);
 		QuestionsResponse questions = blockingStub.getQuestions(QuestionsRequest.newBuilder().build());
 
-		Assert.assertEquals(true, "Whats a good way to implement a GRPC Microservice?".equals(questions.getQuestionList().get(0).getQuestionContent()));
+		Assert.assertEquals("Whats a good way to implement a GRPC Microservice?", questions.getQuestionList().get(0).getQuestionContent());
 	}
 
 	@After

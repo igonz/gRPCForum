@@ -4,16 +4,16 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "question")
 public class Question extends DatabaseObject {
     private String questionContent;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<Answer> answers = new ArrayList<>();
+    @OneToMany(mappedBy = "question", fetch = FetchType.EAGER)
+    private Set<Answer> answers = new HashSet<>();
 
     public String getQuestionContent() {
         return questionContent;
@@ -23,11 +23,11 @@ public class Question extends DatabaseObject {
         this.questionContent = questionContent;
     }
 
-    public List<Answer> getAnswers() {
+    public Set<Answer> getAnswers() {
         return answers;
     }
 
-    public void setAnswers(List<Answer> answers) {
+    public void setAnswers(Set<Answer> answers) {
         this.answers = answers;
     }
 }
