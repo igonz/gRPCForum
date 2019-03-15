@@ -8,7 +8,10 @@ import com.sample.forum.gRPC.QuestionGrpc;
 import com.sample.forum.gRPC.QuestionMessage;
 import com.sample.forum.gRPC.QuestionsRequest;
 import com.sample.forum.gRPC.QuestionsResponse;
+import com.sample.forum.gRPC.UnWatchQuestionRequest;
+import com.sample.forum.gRPC.UnWatchQuestionResponse;
 import com.sample.forum.gRPC.UserMessage;
+import com.sample.forum.gRPC.WatchQuestionRequest;
 import com.sample.forum.gRPC.model.Answer;
 import com.sample.forum.gRPC.model.Question;
 import com.sample.forum.gRPC.service.IQuestionService;
@@ -103,13 +106,28 @@ public class QuestionImpl extends QuestionGrpc.QuestionImplBase {
         if(answer == null) {
             responseObserver.onError(new StatusRuntimeException(Status.NOT_FOUND));
         } else {
-            responseObserver.onNext(AnswerResponse.newBuilder()
+            AnswerResponse answerResponse = AnswerResponse.newBuilder()
                     .setAnswer(AnswerMessage.newBuilder()
                             .setId(answer.getId())
                             .setAnswerContent(answer.getAnswerContent())
                             .build())
-                    .build());
+                    .build();
+
+            SyntheticQueue.newAnswerPosted(String.valueOf(request.getQuestionID()), answerResponse);
+            responseObserver.onNext(answerResponse);
             responseObserver.onCompleted();
         }
+    }
+
+    @Override
+    public void watchQuestionForNewAnswer(WatchQuestionRequest request, StreamObserver<AnswerResponse> responseObserver) {
+        SyntheticQueue.registerListenerForQuestion(request.getQuestionId() + "_" + request.getUserId(), responseObserver);
+    }
+
+    @Override
+    public void unwatchQuestionForNewAnswer(UnWatchQuestionRequest request, StreamObserver<UnWatchQuestionResponse> responseObserver) {
+        SyntheticQueue.removeListenerForQuestion(request.getQuestionId() + "_" + request.getUserId());
+        responseObserver.onNext(UnWatchQuestionResponse.newBuilder().build());
+        responseObserver.onCompleted();
     }
 }

@@ -8,12 +8,29 @@ option objc_class_prefix = "GRPCF";
 package grpcforum;
 
 service Question {
-    rpc getQuestions (QuestionsRequest) returns (QuestionsResponse) {
-    }
-    rpc postQuestion (NewQuestionRequest) returns (QuestionsResponse) {
-    }
-    rpc postAnswer (NewAnswerRequest) returns (AnswerResponse) {
-    }
+    rpc getQuestions (QuestionsRequest) returns (QuestionsResponse) {}
+    rpc postQuestion (NewQuestionRequest) returns (QuestionsResponse) {}
+    rpc postAnswer (NewAnswerRequest) returns (AnswerResponse) {}
+    rpc watchQuestionForNewAnswer (WatchQuestionRequest) returns (stream AnswerResponse) {}
+    rpc unwatchQuestionForNewAnswer (UnWatchQuestionRequest) returns (UnWatchQuestionResponse) {}
+    rpc watchForNewQuestion (WatchNewQuestionRequest) returns (stream QuestionsResponse) {}
+}
+
+message WatchNewQuestionRequest {
+}
+
+message UnWatchQuestionRequest {
+    int64 questionId=1;
+    int64 userId=2;
+}
+
+message UnWatchQuestionResponse {
+
+}
+
+message WatchQuestionRequest {
+    int64 questionId=1;
+    int64 userId=2;
 }
 
 message QuestionsRequest {
