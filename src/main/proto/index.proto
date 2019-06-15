@@ -14,9 +14,19 @@ service Question {
     rpc watchQuestionForNewAnswer (WatchQuestionRequest) returns (stream AnswerResponse) {}
     rpc unwatchQuestionForNewAnswer (UnWatchQuestionRequest) returns (UnWatchQuestionResponse) {}
     rpc watchForNewQuestion (WatchNewQuestionRequest) returns (stream QuestionsResponse) {}
+    rpc unwatchForNewQuestion (UnWatchNewQuestionRequest) returns (UnWatchNewQuestionResponse) {}
 }
 
 message WatchNewQuestionRequest {
+    int64 userId=1;
+}
+
+message UnWatchNewQuestionRequest {
+    int64 userId=1;
+}
+
+message UnWatchNewQuestionResponse {
+
 }
 
 message UnWatchQuestionRequest {

@@ -2,8 +2,10 @@ package com.sample.forum.gRPC;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -82,16 +84,68 @@ public class GRpcForumApplicationTests {
 //				.build());
 //	}
 
+//	@Test
+//	public void watchQuestionForNewAnswer() {
+//		QuestionGrpc.QuestionStub stub = QuestionGrpc.newStub(managedChannel);
+//		stub.watchQuestionForNewAnswer(
+//				WatchQuestionRequest.newBuilder()
+//						.setQuestionId(1L)
+//						.build(), new StreamObserver<AnswerResponse>() {
+//					@Override
+//					public void onNext(AnswerResponse value) {
+//						System.out.println("ANSWER RECEIVED " + value.getAnswer().getAnswerContent());
+//					}
+//
+//					@Override
+//					public void onError(Throwable t) {
+//
+//					}
+//
+//					@Override
+//					public void onCompleted() {
+//
+//					}
+//				});
+//
+//		QuestionGrpc.QuestionBlockingStub blockingStub = QuestionGrpc.newBlockingStub(managedChannel);
+//		AnswerResponse response = blockingStub.postAnswer(NewAnswerRequest.newBuilder()
+//				.setAnswer(AnswerMessage.newBuilder().setAnswerContent("Watched Test").build())
+//				.setQuestionID(1L)
+//				.setUserID(2L)
+//				.build());
+//
+//		blockingStub = QuestionGrpc.newBlockingStub(managedChannel);
+//		blockingStub.unwatchQuestionForNewAnswer(UnWatchQuestionRequest.newBuilder().setQuestionId(1L).build());
+//
+//		try {
+//			Thread.sleep(5000);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+//
+//		blockingStub = QuestionGrpc.newBlockingStub(managedChannel);
+//		response = blockingStub.postAnswer(NewAnswerRequest.newBuilder()
+//				.setAnswer(AnswerMessage.newBuilder().setAnswerContent("Will not Broadcast Watched Test").build())
+//				.setQuestionID(1L)
+//				.setUserID(2L)
+//				.build());
+//
+//		try {
+//			Thread.sleep(5000);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+//
+//	}
+
 	@Test
-	public void watchQuestionForNewAnswer() {
+	public void watchForNewQuestionTest() {
 		QuestionGrpc.QuestionStub stub = QuestionGrpc.newStub(managedChannel);
-		stub.watchQuestionForNewAnswer(
-				WatchQuestionRequest.newBuilder()
-						.setQuestionId(1L)
-						.build(), new StreamObserver<AnswerResponse>() {
+		stub.watchForNewQuestion(WatchNewQuestionRequest.newBuilder().setUserId(1).build(),
+				new StreamObserver<QuestionsResponse>() {
 					@Override
-					public void onNext(AnswerResponse value) {
-						System.out.println("ANSWER RECEIVED " + value.getAnswer().getAnswerContent());
+					public void onNext(QuestionsResponse value) {
+						System.out.println("NEW QUESTION RECEIVED " + value.getQuestionList().get(0).getQuestionContent());
 					}
 
 					@Override
@@ -106,26 +160,11 @@ public class GRpcForumApplicationTests {
 				});
 
 		QuestionGrpc.QuestionBlockingStub blockingStub = QuestionGrpc.newBlockingStub(managedChannel);
-		AnswerResponse response = blockingStub.postAnswer(NewAnswerRequest.newBuilder()
-				.setAnswer(AnswerMessage.newBuilder().setAnswerContent("Watched Test").build())
-				.setQuestionID(1L)
-				.setUserID(2L)
-				.build());
-
-		blockingStub = QuestionGrpc.newBlockingStub(managedChannel);
-		blockingStub.unwatchQuestionForNewAnswer(UnWatchQuestionRequest.newBuilder().setQuestionId(1L).build());
-
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		blockingStub = QuestionGrpc.newBlockingStub(managedChannel);
-		response = blockingStub.postAnswer(NewAnswerRequest.newBuilder()
-				.setAnswer(AnswerMessage.newBuilder().setAnswerContent("Will not Broadcast Watched Test").build())
-				.setQuestionID(1L)
-				.setUserID(2L)
+		QuestionsResponse response = blockingStub.postQuestion(NewQuestionRequest.newBuilder()
+				.setNewQuestion(NewQuestionMessage.newBuilder()
+						.setQuestionContent("New Watch Question Test?")
+						.setUserID(1L)
+						.build())
 				.build());
 
 		try {
@@ -133,7 +172,6 @@ public class GRpcForumApplicationTests {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	@After

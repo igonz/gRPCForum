@@ -1,17 +1,6 @@
 package com.sample.forum.gRPC.server;
 
-import com.sample.forum.gRPC.AnswerMessage;
-import com.sample.forum.gRPC.AnswerResponse;
-import com.sample.forum.gRPC.NewAnswerRequest;
-import com.sample.forum.gRPC.NewQuestionRequest;
-import com.sample.forum.gRPC.QuestionGrpc;
-import com.sample.forum.gRPC.QuestionMessage;
-import com.sample.forum.gRPC.QuestionsRequest;
-import com.sample.forum.gRPC.QuestionsResponse;
-import com.sample.forum.gRPC.UnWatchQuestionRequest;
-import com.sample.forum.gRPC.UnWatchQuestionResponse;
-import com.sample.forum.gRPC.UserMessage;
-import com.sample.forum.gRPC.WatchQuestionRequest;
+import com.sample.forum.gRPC.*;
 import com.sample.forum.gRPC.model.Answer;
 import com.sample.forum.gRPC.model.Question;
 import com.sample.forum.gRPC.service.IQuestionService;
@@ -93,6 +82,8 @@ public class QuestionImpl extends QuestionGrpc.QuestionImplBase {
 
             responseObserver.onNext(response);
             responseObserver.onCompleted();
+
+            SyntheticQueue.newQuestionPosted(response);
         }
     }
 
@@ -128,6 +119,18 @@ public class QuestionImpl extends QuestionGrpc.QuestionImplBase {
     public void unwatchQuestionForNewAnswer(UnWatchQuestionRequest request, StreamObserver<UnWatchQuestionResponse> responseObserver) {
         SyntheticQueue.removeListenerForQuestion(request.getQuestionId() + "_" + request.getUserId());
         responseObserver.onNext(UnWatchQuestionResponse.newBuilder().build());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void watchForNewQuestion(WatchNewQuestionRequest request, StreamObserver<QuestionsResponse> responseObserver) {
+        SyntheticQueue.registerListenerForNewQuestion(String.valueOf(request.getUserId()), responseObserver);
+    }
+
+    @Override
+    public void unwatchForNewQuestion(UnWatchNewQuestionRequest request, StreamObserver<UnWatchNewQuestionResponse> responseObserver) {
+        SyntheticQueue.removeListenersForNewQuestion(String.valueOf(request.getUserId()));
+        responseObserver.onNext(UnWatchNewQuestionResponse.newBuilder().build());
         responseObserver.onCompleted();
     }
 }
