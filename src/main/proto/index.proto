@@ -15,6 +15,21 @@ service Question {
     rpc unwatchQuestionForNewAnswer (UnWatchQuestionRequest) returns (UnWatchQuestionResponse) {}
     rpc watchForNewQuestion (WatchNewQuestionRequest) returns (stream QuestionsResponse) {}
     rpc unwatchForNewQuestion (UnWatchNewQuestionRequest) returns (UnWatchNewQuestionResponse) {}
+    rpc registerUserAudit (stream RegisterUserAuditRequest) returns (RegisterUserAuditResponse) {}
+}
+
+enum UserAction {
+    VIEWING_QUESTION = 0;
+    TYPING = 1;
+}
+
+message RegisterUserAuditRequest {
+    int64 userId=1;
+    int64 questionId = 2;
+    UserAction userAction=3;
+}
+
+message RegisterUserAuditResponse {
 }
 
 message WatchNewQuestionRequest {

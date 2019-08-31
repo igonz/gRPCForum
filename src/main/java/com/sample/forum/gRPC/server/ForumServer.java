@@ -27,18 +27,19 @@ public class ForumServer {
         try {
             start();
 //            blockUntilShutdown();
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             LOG.error("Error Initializing GRPC Server");
         }
     }
 
-    private void start() throws IOException {
+    private void start() throws IOException, InterruptedException {
         Integer port = env.getProperty("forum.server.port", Integer.class, 8080);
         ServerBuilder<?> serverBuilder = ServerBuilder.forPort(port);
         bindableServices.forEach(serverBuilder::addService);
         server = serverBuilder.build().start();
         LOG.info("Server started, listening on " + port);
+        server.awaitTermination();
     }
 
     private void stop() {

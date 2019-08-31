@@ -133,4 +133,25 @@ public class QuestionImpl extends QuestionGrpc.QuestionImplBase {
         responseObserver.onNext(UnWatchNewQuestionResponse.newBuilder().build());
         responseObserver.onCompleted();
     }
+
+    @Override
+    public StreamObserver<RegisterUserAuditRequest> registerUserAudit(StreamObserver<RegisterUserAuditResponse> responseObserver) {
+       return new StreamObserver<RegisterUserAuditRequest>() {
+           @Override
+           public void onNext(RegisterUserAuditRequest value) {
+               System.out.println("User: [" + value.getUserId() + "] is executing action: [" + value.getUserAction().name()+ "]" + " on question: [" + value.getQuestionId() + "]");
+           }
+
+           @Override
+           public void onError(Throwable t) {
+               System.err.println("ERROR ON USER AUDIT: " + t.getMessage());
+           }
+
+           @Override
+           public void onCompleted() {
+               System.out.println("End of User Audit");
+               responseObserver.onCompleted();
+           }
+       };
+    }
 }

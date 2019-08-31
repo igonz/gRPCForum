@@ -138,40 +138,63 @@ public class GRpcForumApplicationTests {
 //
 //	}
 
+//	@Test
+//	public void watchForNewQuestionTest() {
+//		QuestionGrpc.QuestionStub stub = QuestionGrpc.newStub(managedChannel);
+//		stub.watchForNewQuestion(WatchNewQuestionRequest.newBuilder().setUserId(1).build(),
+//				new StreamObserver<QuestionsResponse>() {
+//					@Override
+//					public void onNext(QuestionsResponse value) {
+//						System.out.println("NEW QUESTION RECEIVED " + value.getQuestionList().get(0).getQuestionContent());
+//					}
+//
+//					@Override
+//					public void onError(Throwable t) {
+//
+//					}
+//
+//					@Override
+//					public void onCompleted() {
+//
+//					}
+//				});
+//
+//		QuestionGrpc.QuestionBlockingStub blockingStub = QuestionGrpc.newBlockingStub(managedChannel);
+//		QuestionsResponse response = blockingStub.postQuestion(NewQuestionRequest.newBuilder()
+//				.setNewQuestion(NewQuestionMessage.newBuilder()
+//						.setQuestionContent("New Watch Question Test?")
+//						.setUserID(1L)
+//						.build())
+//				.build());
+//
+//		try {
+//			Thread.sleep(5000);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+//	}
+
 	@Test
-	public void watchForNewQuestionTest() {
+	public void registerUserActionTest() {
 		QuestionGrpc.QuestionStub stub = QuestionGrpc.newStub(managedChannel);
-		stub.watchForNewQuestion(WatchNewQuestionRequest.newBuilder().setUserId(1).build(),
-				new StreamObserver<QuestionsResponse>() {
-					@Override
-					public void onNext(QuestionsResponse value) {
-						System.out.println("NEW QUESTION RECEIVED " + value.getQuestionList().get(0).getQuestionContent());
-					}
+		StreamObserver<RegisterUserAuditRequest> requestObserver = stub.registerUserAudit(new StreamObserver<RegisterUserAuditResponse>() {
+			@Override
+			public void onNext(RegisterUserAuditResponse value) {
 
-					@Override
-					public void onError(Throwable t) {
+			}
 
-					}
+			@Override
+			public void onError(Throwable t) {
 
-					@Override
-					public void onCompleted() {
+			}
 
-					}
-				});
+			@Override
+			public void onCompleted() {
+				System.out.println("Closed connection with Server");
+			}
+		});
 
-		QuestionGrpc.QuestionBlockingStub blockingStub = QuestionGrpc.newBlockingStub(managedChannel);
-		QuestionsResponse response = blockingStub.postQuestion(NewQuestionRequest.newBuilder()
-				.setNewQuestion(NewQuestionMessage.newBuilder()
-						.setQuestionContent("New Watch Question Test?")
-						.setUserID(1L)
-						.build())
-				.build());
 
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 
 	@After
