@@ -194,7 +194,83 @@ public class GRpcForumApplicationTests {
 			}
 		});
 
+		try{
+			requestObserver.onNext(
+					RegisterUserAuditRequest
+							.newBuilder()
+							.setQuestionId(1)
+							.setUserId(1)
+							.setUserAction(UserAction.VIEWING_QUESTION)
+							.build()
+			);
+		} catch (Exception e) {
+			requestObserver.onError(e);
+		}
 
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		requestObserver.onCompleted();
+
+	}
+
+	@Test
+	public void chatTest() {
+		QuestionGrpc.QuestionStub stub = QuestionGrpc.newStub(managedChannel);
+		StreamObserver<ChatRequest> streamObserver = stub.chat(new StreamObserver<ChatResponse>() {
+			@Override
+			public void onNext(ChatResponse value) {
+				System.out.println("[CLIENT] Received Message for Chat ID [" + value.getChatId() + "] from User ID [" + value.getUserId() + "] Message is: " + value.getChatMessage());
+			}
+
+			@Override
+			public void onError(Throwable t) {
+
+			}
+
+			@Override
+			public void onCompleted() {
+
+			}
+		});
+
+		streamObserver.onNext(ChatRequest.newBuilder()
+				.setUserId(1)
+				.setChatId(1)
+				.setChatMessage("What up?")
+				.build()
+		);
+
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		streamObserver.onNext(ChatRequest.newBuilder()
+				.setUserId(2)
+				.setChatId(1)
+				.setChatMessage("Nothing Much. You?")
+				.build()
+		);
+
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		streamObserver.onNext(ChatRequest.newBuilder()
+				.setUserId(1)
+				.setChatId(1)
+				.setChatMessage("Chillin")
+				.build()
+		);
+
+		streamObserver.onCompleted();
 	}
 
 	@After

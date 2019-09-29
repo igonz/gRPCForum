@@ -10,9 +10,7 @@ import io.grpc.stub.StreamObserver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class QuestionImpl extends QuestionGrpc.QuestionImplBase {
@@ -153,5 +151,43 @@ public class QuestionImpl extends QuestionGrpc.QuestionImplBase {
                responseObserver.onCompleted();
            }
        };
+    }
+
+    private Map<Long, List<StreamObserver<ChatResponse>>> chatBroadcast = new HashMap<>();
+    @Override
+    public StreamObserver<ChatRequest> chat(StreamObserver<ChatResponse> responseObserver) {
+        return new StreamObserver<ChatRequest>() {
+            @Override
+            public void onNext(ChatRequest value) {
+                List<StreamObserver<ChatResponse>> streamObservers = chatBroadcast.get(value.getChatId());
+                if(streamObservers == null) {
+                    streamObservers = new ArrayList<>();
+                }
+                if(!streamObservers.contains(responseObserver)) {
+                    streamObservers.add(responseObserver);
+                }
+
+                System.out.println("[SERVER] New Message in Chat ID [" + value.getChatId() + "] from User ID [" + value.getUserId() + "] Message is: " + value.getChatMessage());
+                for(StreamObserver<ChatResponse> streamObserver : streamObservers) {
+                    streamObserver.onNext(
+                            ChatResponse.newBuilder()
+                                    .setChatId(value.getChatId())
+                                    .setChatMessage(value.getChatMessage())
+                                    .setUserId(value.getUserId())
+                                    .build()
+                    );
+                }
+            }
+
+            @Override
+            public void onError(Throwable t) {
+
+            }
+
+            @Override
+            public void onCompleted() {
+
+            }
+        };
     }
 }

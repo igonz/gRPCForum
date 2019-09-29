@@ -39,7 +39,7 @@ public class ForumServer {
         bindableServices.forEach(serverBuilder::addService);
         server = serverBuilder.build().start();
         LOG.info("Server started, listening on " + port);
-        server.awaitTermination();
+//        server.awaitTermination(); Uncomment this to keep server running
     }
 
     private void stop() {

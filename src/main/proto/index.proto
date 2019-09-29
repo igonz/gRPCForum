@@ -16,11 +16,24 @@ service Question {
     rpc watchForNewQuestion (WatchNewQuestionRequest) returns (stream QuestionsResponse) {}
     rpc unwatchForNewQuestion (UnWatchNewQuestionRequest) returns (UnWatchNewQuestionResponse) {}
     rpc registerUserAudit (stream RegisterUserAuditRequest) returns (RegisterUserAuditResponse) {}
+    rpc chat (stream ChatRequest) returns (stream ChatResponse) {}
 }
 
 enum UserAction {
     VIEWING_QUESTION = 0;
     TYPING = 1;
+}
+
+message ChatRequest {
+    string chatMessage=1;
+    int64 userId=2;
+    int64 chatId=3;
+}
+
+message ChatResponse {
+    string chatMessage=1;
+    int64 userId=2;
+    int64 chatId=3;
 }
 
 message RegisterUserAuditRequest {
