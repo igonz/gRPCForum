@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -34,8 +35,13 @@ public class ForumServer {
     }
 
     private void start() throws IOException, InterruptedException {
-        Integer port = env.getProperty("forum.server.port", Integer.class, 8080);
+        int port = 443;
+//        Integer port = env.getProperty("forum.server.port", Integer.class, 8080);
         ServerBuilder<?> serverBuilder = ServerBuilder.forPort(port);
+        serverBuilder.useTransportSecurity(
+                new ClassPathResource("localhost.crt").getInputStream(),
+                new ClassPathResource("localhost.key").getInputStream()
+        );
         bindableServices.forEach(serverBuilder::addService);
         server = serverBuilder.build().start();
         LOG.info("Server started, listening on " + port);
